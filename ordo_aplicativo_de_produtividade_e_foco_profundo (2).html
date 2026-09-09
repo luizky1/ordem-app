@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ORDO · Cadência & Foco Profundo</title>
+  
+  <!-- Manifesto PWA & Metadados para App Mobile Nativo -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d1322">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ORDO">
+  
+  <!-- Favicons e Ícones de Aplicação (SVG Vetorial Autônomo com Fallback) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d1322'/><text x='50%' y='58%' font-family='serif' font-size='56' font-weight='bold' fill='%23e2b357' text-anchor='middle' dominant-baseline='middle'>Ω</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d1322'/><text x='50%' y='58%' font-family='serif' font-size='56' font-weight='bold' fill='%23e2b357' text-anchor='middle' dominant-baseline='middle'>Ω</text></svg>">
+
+  <!-- Registo do Service Worker PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.warn('Execução do Service Worker em modo local ou preview:', err);
+        });
+      });
+    }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter & Cinzel para estética clássica e moderna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Cinzel', 'serif'],
+          },
+          colors: {
+            ordo: {
+              950: '#070a12',
+              900: '#0d1322',
+              850: '#131b2e',
+              800: '#1b2640',
+              700: '#2b395b',
+              gold: '#e2b357',
+              goldDark: '#b88930',
+              amberGlow: 'rgba(226, 179, 87, 0.15)'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Transições suaves ao alternar o tema */
+    body, aside, header, nav, main, section, div, button, input, select {
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease, box-shadow 0.25s ease;
+    }
+
+    /* Barras de deslocamento refinadas para Tema Escuro */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0d1322;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2b395b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e2b357;
+    }
+    
+    .gold-glow {
+      box-shadow: 0 0 25px rgba(226, 179, 87, 0.2);
+    }
+    .pulse-subtle {
+      animation: pulseGlow 3s infinite ease-in-out;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.9; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); }
+    }
+    
+    button, nav {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* =================================================================
+       ESTILIZAÇÃO DO TEMA CLARO (Harmonia Editorial & Marfim Monástico)
+       ================================================================= */
+    html:not(.dark) {
+      color-scheme: light;
+    }
+    html:not(.dark) body {
+      background-color: #f7f5ef !important;
+      color: #24211d !important;
+    }
+    html:not(.dark) ::-webkit-scrollbar-track {
+      background: #ece7dc !important;
+    }
+    html:not(.dark) ::-webkit-scrollbar-thumb {
+      background: #cdbeaa !important;
+    }
+    html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+      background: #b58022 !important;
+    }
+    html:not(.dark) .gold-glow {
+      box-shadow: 0 10px 30px rgba(181, 128, 34, 0.12) !important;
+    }
+
+    /* Cores de Fundo no Tema Claro */
+    html:not(.dark) .bg-ordo-950 {
+      background-color: #f7f5ef !important;
+    }
+    html:not(.dark) .bg-ordo-900 {
+      background-color: #ffffff !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    html:not(.dark) .bg-ordo-900\/95 {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+    }
+    html:not(.dark) .bg-ordo-900\/60 {
+      background-color: rgba(255, 255, 255, 0.85) !important;
+    }
+    html:not(.dark) .bg-ordo-850 {
+      background-color: #f1ece1 !important;
+    }
+    html:not(.dark) .bg-ordo-800 {
+      background-color: #e6dfcf !important;
+    }
+    html:not(.dark) .hover\:bg-ordo-850:hover {
+      background-color: #e9e3d4 !important;
+    }
+    html:not(.dark) .hover\:bg-ordo-800:hover {
+      background-color: #ded6c4 !important;
+    }
+    html:not(.dark) .hover\:bg-ordo-700:hover {
+      background-color: #d1c7b2 !important;
+    }
+
+    /* Bordas no Tema Claro */
+    html:not(.dark) .border-ordo-800,
+    html:not(.dark) .border-ordo-800\/80 {
+      border-color: #e2dbce !important;
+    }
+    html:not(.dark) .border-ordo-700 {
+      border-color: #d5ccbe !important;
+    }
+
+    /* Tipografia e Legibilidade no Tema Claro */
+    html:not(.dark) .text-white {
+      color: #1a1714 !important;
+    }
+    html:not(.dark) .text-slate-100 {
+      color: #24201c !important;
+    }
+    html:not(.dark) .text-slate-200 {
+      color: #353029 !important;
+    }
+    html:not(.dark) .text-slate-300 {
+      color: #4f473e !important;
+    }
+    html:not(.dark) .text-slate-400 {
+      color: #6f675c !important;
+    }
+
+    /* Realces Dourados / Âmbar adaptados para fundo claro */
+    html:not(.dark) .text-amber-400,
+    html:not(.dark) .text-amber-300 {
+      color: #b45309 !important;
+    }
+    html:not(.dark) .bg-amber-500\/10 {
+      background-color: rgba(217, 119, 6, 0.12) !important;
+    }
+    html:not(.dark) .bg-amber-500\/20 {
+      background-color: rgba(217, 119, 6, 0.18) !important;
+    }
+    html:not(.dark) .border-amber-500\/30,
+    html:not(.dark) .border-amber-500\/40 {
+      border-color: rgba(217, 119, 6, 0.35) !important;
+    }
+
+    /* Cores dos 5 Eixos em Fundo Claro */
+    html:not(.dark) .text-purple-400 { color: #7e22ce !important; }
+    html:not(.dark) .text-rose-400 { color: #be123c !important; }
+    html:not(.dark) .text-blue-400 { color: #1d4ed8 !important; }
+    html:not(.dark) .text-emerald-400 { color: #047857 !important; }
+
+    /* Inputs e Formulários no Tema Claro */
+    html:not(.dark) input,
+    html:not(.dark) select,
+    html:not(.dark) textarea {
+      color: #1a1714 !important;
+      background-color: #f5f0e6 !important;
+      border-color: #dbd2c2 !important;
+    }
+    html:not(.dark) input::placeholder {
+      color: #8c8273 !important;
+    }
+
+    /* Anel de Foco do Cronómetro */
+    html:not(.dark) #timer-track-circle {
+      stroke: #e2dbce !important;
+    }
+
+    /* Banner Principal de Foco no Tema Claro */
+    html:not(.dark) .hero-focus-banner {
+      background: linear-gradient(to right, #ffffff, #faf6ee, #fef2db) !important;
+      border-color: rgba(217, 119, 6, 0.25) !important;
+    }
+
+    /* Botão de Avaliação Noturna */
+    html:not(.dark) .score-btn.border-amber-500 {
+      background-color: #fef3c7 !important;
+      color: #92400e !important;
+    }
+  </style>
+</head>
+
+<body class="bg-ordo-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col md:flex-row selection:bg-amber-500 selection:text-black">
+
+  <!-- ================= NOTIFICAÇÃO TOAST FLUTUANTE ================= -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none transition-all duration-300"></div>
+
+  <!-- ================= SIDEBAR DESKTOP (Oculta em Dispositivos Móveis) ================= -->
+  <aside class="hidden md:flex flex-col w-72 bg-ordo-900 border-r border-ordo-800/80 p-6 justify-between shrink-0">
+    <div class="space-y-8">
+      <!-- Marca / Logótipo -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-ordo-950 font-serif font-black text-xl shadow-lg shadow-amber-500/20">
+            Ω
+          </div>
+          <div>
+            <h1 class="font-serif tracking-widest text-lg font-bold text-white">ORDO</h1>
+            <p class="text-[10px] text-amber-400/90 font-mono tracking-wider uppercase">Cadência & Foco</p>
+          </div>
+        </div>
+
+        <!-- Botão Rápido de Alternar Tema (Desktop Header) -->
+        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-ordo-850 border border-ordo-800 text-amber-400 hover:text-amber-300 hover:scale-105 active:scale-95 transition-all" title="Alternar Tema Claro / Escuro">
+          <i id="theme-icon-top" data-lucide="sun" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Citação Rápida -->
+      <div class="p-3.5 rounded-xl bg-ordo-850 border border-ordo-800 text-xs text-slate-300 italic">
+        <p class="leading-relaxed">“Faz o que deves e está no que fazes. Ocupa-te, não te pré-ocupes.”</p>
+        <span class="block mt-1 text-[10px] font-semibold text-amber-400 not-italic">— Princípio de Ordem</span>
+      </div>
+
+      <!-- Navegação Principal -->
+      <nav class="space-y-1.5" id="nav-desktop">
+        <button onclick="switchTab('hoje')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-300 hover:bg-ordo-850 hover:text-white" data-tab="hoje">
+          <i data-lucide="layout-grid" class="w-5 h-5 text-amber-400"></i>
+          <span>Hoje & 5 Eixos</span>
+        </button>
+
+        <button onclick="switchTab('foco')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-300 hover:bg-ordo-850 hover:text-white" data-tab="foco">
+          <i data-lucide="compass" class="w-5 h-5 text-amber-400"></i>
+          <span>Modo Monástico</span>
+          <span class="ml-auto text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-mono">Foco</span>
+        </button>
+
+        <button onclick="switchTab('leituras')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-300 hover:bg-ordo-850 hover:text-white" data-tab="leituras">
+          <i data-lucide="book-open" class="w-5 h-5 text-amber-400"></i>
+          <span>Acabativa de Obras</span>
+        </button>
+
+        <button onclick="switchTab('retrospectiva')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-300 hover:bg-ordo-850 hover:text-white" data-tab="retrospectiva">
+          <i data-lucide="moon-star" class="w-5 h-5 text-amber-400"></i>
+          <span>Poda Noturna</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Controlos de Foco, Áudio e Tema -->
+    <div class="space-y-3">
+      <!-- Botão de Alternância de Tema com Rótulo -->
+      <button onclick="toggleTheme()" class="w-full py-2.5 px-3.5 rounded-xl bg-ordo-850 hover:bg-ordo-800 border border-ordo-800 text-xs font-medium text-slate-200 flex items-center justify-between transition-colors">
+        <span class="flex items-center gap-2.5">
+          <i id="theme-icon-desktop" data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
+          <span id="theme-text-desktop">Alternar para Claro</span>
+        </span>
+        <span id="theme-badge-desktop" class="text-[10px] font-mono px-2 py-0.5 rounded bg-ordo-900 border border-ordo-700 text-amber-400">Escuro</span>
+      </button>
+
+      <!-- Estado de Foco e Som Ambiente -->
+      <div class="p-4 rounded-2xl bg-ordo-850 border border-ordo-800 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Ruído de Foco:</span>
+          <span id="sound-status-label" class="font-mono text-amber-400">Desligado</span>
+        </div>
+        <button onclick="toggleAmbientSound()" class="w-full py-2 px-3 rounded-lg bg-ordo-800 hover:bg-ordo-700 text-xs font-medium text-slate-200 flex items-center justify-center gap-2 transition-colors">
+          <i data-lucide="volume-2" class="w-4 h-4 text-amber-400"></i>
+          <span id="sound-btn-text">Ruído Castanho Zen</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= BARRA SUPERIOR MOBILE ================= -->
+  <header class="md:hidden flex items-center justify-between p-4 bg-ordo-900 border-b border-ordo-800/80 sticky top-0 z-30">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-ordo-950 font-serif font-bold text-sm">
+        Ω
+      </div>
+      <div>
+        <h1 class="font-serif text-sm font-bold text-white tracking-wider">ORDO</h1>
+        <p class="text-[9px] text-amber-400 font-mono">A VIRTUDE DA ORDEM</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <!-- Botão Tema Mobile -->
+      <button onclick="toggleTheme()" class="p-2 rounded-lg bg-ordo-850 border border-ordo-800 text-amber-400 active:scale-95 transition-transform" title="Alternar Tema Claro / Escuro" id="theme-btn-mobile">
+        <i id="theme-icon-mobile" data-lucide="sun" class="w-4 h-4"></i>
+      </button>
+
+      <button onclick="toggleAmbientSound()" class="p-2 rounded-lg bg-ordo-850 border border-ordo-800 text-amber-400 active:scale-95 transition-transform" title="Som Ambiente">
+        <i data-lucide="headphones" class="w-4 h-4"></i>
+      </button>
+
+      <button onclick="openModal('modal-novo-bloco')" class="py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-ordo-950 text-xs font-bold flex items-center gap-1.5 shadow-sm">
+        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+        <span>Bloco</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= ÁREA DE CONTEÚDO PRINCIPAL ================= -->
+  <main class="flex-1 overflow-y-auto pb-24 md:pb-10 p-4 md:p-8 max-w-6xl mx-auto w-full">
+
+    <!-- ================= ABA 1: HOJE & 5 EIXOS ================= -->
+    <section id="tab-hoje" class="tab-content space-y-8 animate-fade">
+      <!-- Cabeçalho do Dia -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono text-amber-400 tracking-wider uppercase flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Ciclo de Atividade Ativa
+          </span>
+          <h2 class="text-2xl md:text-3xl font-serif font-bold mt-1 text-white">Ordenação do Dia</h2>
+          <p class="text-slate-400 text-sm mt-0.5">Hierarquize as suas horas antes que as distrações decidam por si.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openModal('modal-novo-bloco')" class="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-ordo-950 text-sm font-semibold transition-all shadow-lg shadow-amber-500/10">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Agendar Novo Bloco</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Resumo dos 5 Dedos da Ordem (Metas de Atenção calculadas dinamicamente) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <!-- Eixo 1: Propósito -->
+        <div class="bg-ordo-900 border border-ordo-800 rounded-2xl p-4 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-purple-400">1. Propósito</span>
+            <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <div class="text-xl font-bold text-white font-mono" id="stat-tempo-proposito">0 min</div>
+          <p class="text-[11px] text-slate-400 mt-1">Oração, exame & calma</p>
+          <div class="w-full bg-ordo-800 h-1.5 rounded-full mt-3 overflow-hidden">
+            <div id="bar-tempo-proposito" class="bg-purple-500 h-full rounded-full transition-all duration-500 w-0"></div>
+          </div>
+        </div>
+
+        <!-- Eixo 2: Família -->
+        <div class="bg-ordo-900 border border-ordo-800 rounded-2xl p-4 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-rose-400">2. Relações</span>
+            <i data-lucide="heart" class="w-4 h-4 text-rose-400"></i>
+          </div>
+          <div class="text-xl font-bold text-white font-mono" id="stat-tempo-familia">0 min</div>
+          <p class="text-[11px] text-slate-400 mt-1">Presença sem ecrãs</p>
+          <div class="w-full bg-ordo-800 h-1.5 rounded-full mt-3 overflow-hidden">
+            <div id="bar-tempo-familia" class="bg-rose-500 h-full rounded-full transition-all duration-500 w-0"></div>
+          </div>
+        </div>
+
+        <!-- Eixo 3: Trabalho -->
+        <div class="bg-ordo-900 border border-ordo-800 rounded-2xl p-4 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-blue-400">3. Ofício</span>
+            <i data-lucide="briefcase" class="w-4 h-4 text-blue-400"></i>
+          </div>
+          <div class="text-xl font-bold text-white font-mono" id="stat-tempo-trabalho">0 min</div>
+          <p class="text-[11px] text-slate-400 mt-1">Diligência & pontualidade</p>
+          <div class="w-full bg-ordo-800 h-1.5 rounded-full mt-3 overflow-hidden">
+            <div id="bar-tempo-trabalho" class="bg-blue-500 h-full rounded-full transition-all duration-500 w-0"></div>
+          </div>
+        </div>
+
+        <!-- Eixo 4: Saúde -->
+        <div class="bg-ordo-900 border border-ordo-800 rounded-2xl p-4 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-emerald-400">4. Vigor</span>
+            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div class="text-xl font-bold text-white font-mono" id="stat-tempo-saude">0 min</div>
+          <p class="text-[11px] text-slate-400 mt-1">Treino, sono & digestão</p>
+          <div class="w-full bg-ordo-800 h-1.5 rounded-full mt-3 overflow-hidden">
+            <div id="bar-tempo-saude" class="bg-emerald-500 h-full rounded-full transition-all duration-500 w-0"></div>
+          </div>
+        </div>
+
+        <!-- Eixo 5: Estudo -->
+        <div class="bg-ordo-900 border border-ordo-800 rounded-2xl p-4 relative overflow-hidden group hover:border-amber-500/40 transition-all col-span-2 sm:col-span-1">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-amber-400">5. Estudo</span>
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div class="text-xl font-bold text-white font-mono" id="stat-tempo-estudo">0 min</div>
+          <p class="text-[11px] text-slate-400 mt-1">Leitura e síntese ativa</p>
+          <div class="w-full bg-ordo-800 h-1.5 rounded-full mt-3 overflow-hidden">
+            <div id="bar-tempo-estudo" class="bg-amber-400 h-full rounded-full transition-all duration-500 w-0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner de Ação Imediata: Bloco Sugerido / Em Curso -->
+      <div class="hero-focus-banner rounded-3xl bg-gradient-to-r from-ordo-900 via-ordo-850 to-amber-950/40 border border-amber-500/30 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 gold-glow">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-medium">
+            <i data-lucide="flame" class="w-3.5 h-3.5"></i>
+            Próximo Bloco de Alta Densidade
+          </div>
+          <h3 class="text-xl md:text-2xl font-bold text-white" id="hero-block-title">A República (Platão) · Leitura & Fichamento</h3>
+          <p class="text-sm text-slate-300 max-w-xl leading-relaxed">
+            Meta calculada de hoje: <strong class="text-amber-400">25 páginas</strong> em 45 minutos. Elimine separadores paralelos e estímulos externos.
+          </p>
+        </div>
+        <button onclick="startSpecificBlock('A República (Platão)', 45, 'Estudo')" class="w-full md:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-ordo-950 font-bold text-sm tracking-wide shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all shrink-0">
+          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+          <span>Entrar em Modo Monástico</span>
+        </button>
+      </div>
+
+      <!-- Linha do Tempo de Blocos do Dia com Botão de Edição -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-serif text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i>
+            <span>Grade de Blocos Agendados</span>
+          </h3>
+          <span class="text-xs text-slate-400 font-mono" id="blocks-count-label">4 blocos planeados</span>
+        </div>
+
+        <div id="timeline-blocks-list" class="space-y-3">
+          <!-- Blocos renderizados via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ABA 2: MODO MONÁSTICO (FOCO PROFUNDO) ================= -->
+    <section id="tab-foco" class="tab-content hidden space-y-6 animate-fade">
+      <div class="text-center max-w-xl mx-auto space-y-2">
+        <span class="text-xs font-mono uppercase tracking-widest text-amber-400/80">Escudo Monástico de Atenção</span>
+        <h2 class="text-2xl md:text-4xl font-serif font-bold text-white">Estar Inteiro no que Faz</h2>
+        <p class="text-sm text-slate-400" id="monastic-subtitle">Uma única tarefa até à conclusão. Sem alternância cognitiva.</p>
+      </div>
+
+      <!-- Contentor do Cronómetro Monástico -->
+      <div class="max-w-md mx-auto rounded-3xl bg-ordo-900 border border-ordo-800 p-8 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl">
+        <!-- Indicador de Eixo Atual -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ordo-850 border border-ordo-700 text-xs text-amber-300 font-medium mb-6" id="monastic-axis-badge">
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="timer-axis-name">Estudo & Filosofia</span>
+        </div>
+
+        <!-- Título do Foco Atual -->
+        <h3 class="text-lg font-bold text-white text-center mb-6 line-clamp-1" id="timer-task-name">
+          A República · Livro II
+        </h3>
+
+        <!-- Círculo e Contador de Tempo -->
+        <div class="relative w-64 h-64 flex items-center justify-center my-2">
+          <!-- Anel SVG de Progresso -->
+          <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+            <circle id="timer-track-circle" cx="50" cy="50" r="44" stroke="#1b2640" stroke-width="4" fill="transparent"/>
+            <circle id="timer-progress-ring" cx="50" cy="50" r="44" stroke="#e2b357" stroke-width="4" stroke-dasharray="276.46" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" class="transition-all duration-1000"/>
+          </svg>
+
+          <div class="absolute flex flex-col items-center">
+            <span class="text-5xl font-mono font-black tracking-tight text-white" id="timer-display">45:00</span>
+            <span class="text-xs text-slate-400 font-mono mt-1" id="timer-sublabel">TEMPO RESTANTE</span>
+          </div>
+        </div>
+
+        <!-- Controlos do Cronómetro -->
+        <div class="flex items-center gap-4 mt-8">
+          <button onclick="resetTimer()" class="p-3.5 rounded-2xl bg-ordo-850 border border-ordo-800 text-slate-400 hover:text-white hover:bg-ordo-800 active:scale-95 transition-all" title="Reiniciar">
+            <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+          </button>
+
+          <button onclick="toggleTimer()" id="timer-play-btn" class="px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-ordo-950 font-bold text-base flex items-center gap-3 shadow-lg shadow-amber-500/20 active:scale-95 transition-all">
+            <i data-lucide="play" class="w-5 h-5 fill-current" id="timer-play-icon"></i>
+            <span id="timer-play-text">Iniciar Presença</span>
+          </button>
+
+          <button onclick="finishTimerBlockEarly()" class="p-3.5 rounded-2xl bg-ordo-850 border border-ordo-800 text-emerald-400 hover:bg-ordo-800 active:scale-95 transition-all" title="Concluir Bloco">
+            <i data-lucide="check" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Seletor Rápido de Duração -->
+        <div class="flex items-center gap-2 mt-6">
+          <button onclick="setTimerDuration(25)" class="duration-pill px-3 py-1 text-xs rounded-lg bg-ordo-850 border border-ordo-800 text-slate-300 hover:border-amber-500/50">25m</button>
+          <button onclick="setTimerDuration(45)" class="duration-pill px-3 py-1 text-xs rounded-lg bg-ordo-850 border border-amber-500/60 text-amber-300 font-medium">45m</button>
+          <button onclick="setTimerDuration(60)" class="duration-pill px-3 py-1 text-xs rounded-lg bg-ordo-850 border border-ordo-800 text-slate-300 hover:border-amber-500/50">60m</button>
+          <button onclick="setTimerDuration(90)" class="duration-pill px-3 py-1 text-xs rounded-lg bg-ordo-850 border border-ordo-800 text-slate-300 hover:border-amber-500/50">90m</button>
+        </div>
+      </div>
+
+      <!-- Registo Rápido Durante o Bloco -->
+      <div class="max-w-md mx-auto p-4 rounded-2xl bg-ordo-900/60 border border-ordo-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <i data-lucide="bookmark-check" class="w-5 h-5 text-amber-400"></i>
+          <div>
+            <p class="text-xs font-semibold text-white">Registo de Páginas Lidas</p>
+            <p class="text-[11px] text-slate-400">Atualize a sua cota sem sair da imersão</p>
+          </div>
+        </div>
+        <button onclick="openModal('modal-reg-paginas')" class="py-1.5 px-3 rounded-xl bg-ordo-850 hover:bg-ordo-700 text-amber-300 text-xs font-medium transition-colors border border-ordo-800">
+          + Páginas
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= ABA 3: MOTOR DE ACABATIVA DE OBRAS ================= -->
+    <section id="tab-leituras" class="tab-content hidden space-y-8 animate-fade">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono text-amber-400 tracking-wider uppercase">Pacing & Conclusão Intelectual</span>
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-white mt-1">Cemitério de Livros? Nunca Mais.</h2>
+          <p class="text-slate-400 text-sm mt-0.5">Metas matemáticas baseadas no seu tempo real para terminar o que começou.</p>
+        </div>
+        <button onclick="openModal('modal-novo-livro')" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-ordo-950 font-semibold text-sm flex items-center gap-2 transition-all self-start shadow-lg shadow-amber-500/10">
+          <i data-lucide="book-plus" class="w-4 h-4"></i>
+          <span>Cadastrar Nova Obra</span>
+        </button>
+      </div>
+
+      <!-- Métricas Gerais de Acabativa -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="p-5 rounded-2xl bg-ordo-900 border border-ordo-800">
+          <span class="text-xs text-slate-400">Obras em Leitura Ativa</span>
+          <div class="text-3xl font-bold font-mono text-white mt-1" id="stat-livros-ativos">3</div>
+          <span class="text-[11px] text-amber-400">Cota diária somada: ~62 páginas</span>
+        </div>
+        <div class="p-5 rounded-2xl bg-ordo-900 border border-ordo-800">
+          <span class="text-xs text-slate-400">Páginas Concluídas Este Mês</span>
+          <div class="text-3xl font-bold font-mono text-emerald-400 mt-1" id="stat-paginas-lidas">412</div>
+          <span class="text-[11px] text-slate-400">Ritmo de 24 pág/dia de média</span>
+        </div>
+        <div class="p-5 rounded-2xl bg-ordo-900 border border-ordo-800">
+          <span class="text-xs text-slate-400">Livros Concluídos (Ano Corrente)</span>
+          <div class="text-3xl font-bold font-mono text-amber-400 mt-1" id="stat-livros-concluidos">4</div>
+          <span class="text-[11px] text-slate-400">Meta anual de 12 livros</span>
+        </div>
+      </div>
+
+      <!-- Lista de Livros Ativos com Barra de Pacing -->
+      <div class="space-y-4">
+        <h3 class="font-serif text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="library" class="w-4 h-4 text-amber-400"></i>
+          <span>Plano de Leitura Rigoroso</span>
+        </h3>
+
+        <div id="books-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ABA 4: PODA NOTURNA (RETROSPECTIVA DE 90s) ================= -->
+    <section id="tab-retrospectiva" class="tab-content hidden space-y-6 animate-fade">
+      <div class="max-w-2xl mx-auto space-y-6">
+        <div class="text-center space-y-2">
+          <span class="text-xs font-mono uppercase tracking-widest text-purple-400">Exame Diário de 90 Segundos</span>
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-white">A Poda das Arestas</h2>
+          <p class="text-sm text-slate-400">
+            “Como uma árvore que se poda para dar frutos mais vigorosos, corte o que foi inútil hoje.”
+          </p>
+        </div>
+
+        <div class="bg-ordo-900 border border-ordo-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-xl">
+          <!-- Passo 1: Fidelidade aos 5 Eixos -->
+          <div>
+            <label class="text-sm font-semibold text-white block mb-2">
+              1. Qual foi a sua fidelidade aos blocos planeados hoje?
+            </label>
+            <div class="grid grid-cols-5 gap-2 text-center">
+              <button onclick="setRetrospectiveScore(1)" class="score-btn p-3 rounded-xl bg-ordo-850 border border-ordo-800 hover:border-amber-500/50 text-slate-400 font-bold text-sm">1</button>
+              <button onclick="setRetrospectiveScore(2)" class="score-btn p-3 rounded-xl bg-ordo-850 border border-ordo-800 hover:border-amber-500/50 text-slate-400 font-bold text-sm">2</button>
+              <button onclick="setRetrospectiveScore(3)" class="score-btn p-3 rounded-xl bg-ordo-850 border border-ordo-800 hover:border-amber-500/50 text-slate-400 font-bold text-sm">3</button>
+              <button onclick="setRetrospectiveScore(4)" class="score-btn p-3 rounded-xl bg-ordo-850 border border-amber-500 text-amber-300 font-bold text-sm">4</button>
+              <button onclick="setRetrospectiveScore(5)" class="score-btn p-3 rounded-xl bg-ordo-850 border border-ordo-800 hover:border-amber-500/50 text-slate-400 font-bold text-sm">5</button>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2 flex justify-between">
+              <span>Caótico & Disperso</span>
+              <span>Totalmente Presente</span>
+            </p>
+          </div>
+
+          <!-- Passo 2: O que o dispersou hoje? -->
+          <div>
+            <label class="text-sm font-semibold text-white block mb-2">
+              2. Qual aresta de dispersão decide podar amanhã?
+            </label>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3 p-3 rounded-xl bg-ordo-850 border border-ordo-800 cursor-pointer hover:bg-ordo-800/80 transition-colors">
+                <input type="checkbox" checked class="w-4 h-4 rounded text-amber-500 focus:ring-0 bg-ordo-900 border-ordo-700">
+                <span class="text-xs text-slate-300">Telemóvel na secretária durante os blocos de estudo</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl bg-ordo-850 border border-ordo-800 cursor-pointer hover:bg-ordo-800/80 transition-colors">
+                <input type="checkbox" class="w-4 h-4 rounded text-amber-500 focus:ring-0 bg-ordo-900 border-ordo-700">
+                <span class="text-xs text-slate-300">Começar o dia a ler notícias em vez do livro prioritário</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl bg-ordo-850 border border-ordo-800 cursor-pointer hover:bg-ordo-800/80 transition-colors">
+                <input type="checkbox" class="w-4 h-4 rounded text-amber-500 focus:ring-0 bg-ordo-900 border-ordo-700">
+                <span class="text-xs text-slate-300">Excesso de separadores e multitarefa no trabalho</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Passo 3: Fecho de Ciclo -->
+          <div>
+            <label class="text-sm font-semibold text-white block mb-1">
+              3. Resolução Firme para o Amanhã
+            </label>
+            <input type="text" id="input-resolucao-noturna" placeholder="Ex: Primeiro bloco de 45m de Platão antes das 08h30..." class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-amber-400">
+          </div>
+
+          <button onclick="concludeRetrospective()" class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-ordo-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20">
+            Encerrar Dia em Serenidade & Guardar Ciclo
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= BARRA DE NAVEGAÇÃO MOBILE (FIXA) ================= -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-ordo-900/95 backdrop-blur-lg border-t border-ordo-800 px-3 py-2 z-40 flex justify-around items-center">
+    <button onclick="switchTab('hoje')" class="mobile-tab-btn flex flex-col items-center gap-1 text-amber-400 p-1.5" data-tab="hoje">
+      <i data-lucide="layout-grid" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">Hoje</span>
+    </button>
+    <button onclick="switchTab('foco')" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-400 p-1.5" data-tab="foco">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">Foco</span>
+    </button>
+    <button onclick="switchTab('leituras')" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-400 p-1.5" data-tab="leituras">
+      <i data-lucide="book-open" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">Leituras</span>
+    </button>
+    <button onclick="switchTab('retrospectiva')" class="mobile-tab-btn flex flex-col items-center gap-1 text-slate-400 p-1.5" data-tab="retrospectiva">
+      <i data-lucide="moon-star" class="w-5 h-5"></i>
+      <span class="text-[10px] font-medium">Poda</span>
+    </button>
+  </nav>
+
+  <!-- ================= MODAL: NOVO BLOCO ================= -->
+  <div id="modal-novo-bloco" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-ordo-900 border border-ordo-800 rounded-3xl p-6 w-full max-w-md space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-serif text-lg font-bold text-white">Agendar Novo Bloco</h3>
+        <button onclick="closeModal('modal-novo-bloco')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Título da Atividade</label>
+          <input type="text" id="modal-bloco-titulo" placeholder="Ex: Redação de Artigo / Leitura de Tomás de Aquino" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Eixo de Atividade</label>
+            <select id="modal-bloco-eixo" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+              <option value="Estudo">5. Estudo & Cultura</option>
+              <option value="Ofício">3. Ofício & Trabalho</option>
+              <option value="Propósito">1. Propósito & Espírito</option>
+              <option value="Família">2. Família & Relações</option>
+              <option value="Saúde">4. Vigor & Saúde</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Duração (minutos)</label>
+            <input type="number" id="modal-bloco-duracao" value="45" min="10" max="180" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Horário Previsto</label>
+          <input type="time" id="modal-bloco-horario" value="16:00" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modal-novo-bloco')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white">Cancelar</button>
+        <button onclick="salvarNovoBloco()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-ordo-950 font-bold text-xs">Guardar Bloco</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: EDITAR BLOCO AGENDADO ================= -->
+  <div id="modal-editar-bloco" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-ordo-900 border border-ordo-800 rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-serif text-lg font-bold text-white">Editar Bloco de Ordem</h3>
+        </div>
+        <button onclick="closeModal('modal-editar-bloco')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- ID Oculto do Bloco em Edição -->
+      <input type="hidden" id="modal-edit-bloco-id">
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Título da Atividade</label>
+          <input type="text" id="modal-edit-bloco-titulo" placeholder="Ex: Redação de Artigo / Leitura" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Eixo de Atividade</label>
+            <select id="modal-edit-bloco-eixo" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+              <option value="Estudo">5. Estudo & Cultura</option>
+              <option value="Ofício">3. Ofício & Trabalho</option>
+              <option value="Propósito">1. Propósito & Espírito</option>
+              <option value="Família">2. Família & Relações</option>
+              <option value="Saúde">4. Vigor & Saúde</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Duração (minutos)</label>
+            <input type="number" id="modal-edit-bloco-duracao" value="45" min="5" max="240" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 items-center">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Horário Previsto</label>
+            <input type="time" id="modal-edit-bloco-horario" value="14:00" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div class="pt-4">
+            <label class="flex items-center gap-2.5 cursor-pointer bg-ordo-850 border border-ordo-800 px-3 py-2 rounded-xl hover:border-amber-500/40 transition-colors">
+              <input type="checkbox" id="modal-edit-bloco-concluido" class="w-4 h-4 rounded text-amber-500 focus:ring-0 bg-ordo-900 border-ordo-700">
+              <span class="text-xs text-slate-300">Concluído</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-3 border-t border-ordo-800/80">
+        <button onclick="eliminarBlocoEmEdicao()" class="px-3 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <span>Eliminar</span>
+        </button>
+
+        <div class="flex gap-2">
+          <button onclick="closeModal('modal-editar-bloco')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white">Cancelar</button>
+          <button onclick="salvarEdicaoBloco()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-ordo-950 font-bold text-xs shadow-md">Guardar Alterações</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: NOVO LIVRO ================= -->
+  <div id="modal-novo-livro" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-ordo-900 border border-ordo-800 rounded-3xl p-6 w-full max-w-md space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-serif text-lg font-bold text-white">Registar Obra no Pacing</h3>
+        <button onclick="closeModal('modal-novo-livro')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Título do Livro</label>
+          <input type="text" id="modal-livro-titulo" placeholder="Ex: A Vida Intelectual (A.-D. Sertillanges)" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Total de Páginas</label>
+            <input type="number" id="modal-livro-total" value="280" min="1" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Páginas Já Lidas</label>
+            <input type="number" id="modal-livro-lidas" value="0" min="0" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Meta de Dias para Concluir</label>
+          <input type="number" id="modal-livro-dias" value="14" min="1" max="180" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+          <p class="text-[10px] text-amber-400 mt-1" id="preview-cota-livro">Cota diária estimada: 20 páginas por dia</p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modal-novo-livro')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white">Cancelar</button>
+        <button onclick="salvarNovoLivro()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-ordo-950 font-bold text-xs">Incluir Obra</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: REGISTAR PÁGINAS ================= -->
+  <div id="modal-reg-paginas" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-ordo-900 border border-ordo-800 rounded-3xl p-6 w-full max-w-sm space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-serif text-lg font-bold text-white">Registar Progresso</h3>
+        <button onclick="closeModal('modal-reg-paginas')" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Obra</label>
+          <select id="modal-reg-livro-select" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+            <!-- Povoado dinamicamente -->
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Páginas Lidas Nesta Sessão</label>
+          <input type="number" id="modal-reg-qtd-paginas" value="15" min="1" class="w-full bg-ordo-850 border border-ordo-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modal-reg-paginas')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white">Cancelar</button>
+        <button onclick="confirmarRegistroPaginas()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-ordo-950 font-bold text-xs">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LÓGICA JAVASCRIPT DO PRODUTO ================= -->
+  <script>
+    /* =================================================================
+       ESTADO EM MEMÓRIA DO PRODUTO & PERSISTÊNCIA NATIVA
+       ================================================================= */
+    const STORAGE_KEY = 'ordo_app_state_v1';
+
+    const defaultState = {
+      theme: 'dark',
+      currentTab: 'hoje',
+      retrospectiveScore: 4,
+      lastSaved: null,
+      cloudConfig: {
+        url: '',
+        key: ''
+      },
+      
+      // Blocos do dia
+      blocks: [
+        { id: 1, title: 'Oração Matinal & Exame Interior', axis: 'Propósito', duration: 45, time: '06:30', completed: true },
+        { id: 2, title: 'Trabalho de Alta Densidade (Módulo Backend)', axis: 'Ofício', duration: 180, time: '09:00', completed: true },
+        { id: 3, title: 'A República (Platão) · Leitura & Fichamento', axis: 'Estudo', duration: 60, time: '14:30', completed: false },
+        { id: 4, title: 'Treino & Caminhada ao Ar Livre', axis: 'Saúde', duration: 45, time: '17:30', completed: false },
+        { id: 5, title: 'Jantar & Convivência Familiar Plena', axis: 'Família', duration: 90, time: '20:00', completed: false }
+      ],
+
+      // Obras ativas no motor de acabativa
+      books: [
+        { id: 1, title: 'A República', author: 'Platão', totalPages: 450, readPages: 215, targetDays: 10 },
+        { id: 2, title: 'A Vida Intelectual', author: 'A.-D. Sertillanges', totalPages: 240, readPages: 180, targetDays: 7 },
+        { id: 3, title: 'A Virtude da Ordem', author: 'Francisco José de Almeida', totalPages: 160, readPages: 45, targetDays: 5 }
+      ]
+    };
+
+    const AppState = {
+      ...JSON.parse(JSON.stringify(defaultState)),
+
+      // Estado dinâmico de execução do Modo Monástico
+      timer: {
+        active: false,
+        durationMinutes: 45,
+        secondsLeft: 45 * 60,
+        intervalId: null,
+        currentTask: 'A República (Platão) · Leitura & Fichamento',
+        currentAxis: 'Estudo'
+      },
+
+      // Gerador de Áudio Sintetizado Web Audio API
+      audio: {
+        ctx: null,
+        isPlaying: false,
+        noiseNode: null,
+        gainNode: null
+      }
+    };
+
+    /* =================================================================
+       MOTOR DE SALVAMENTO AUTOMÁTICO & LOCALSTORAGE
+       ================================================================= */
+    function saveToStorage() {
+      try {
+        const payload = {
+          theme: AppState.theme,
+          retrospectiveScore: AppState.retrospectiveScore,
+          blocks: AppState.blocks,
+          books: AppState.books,
+          cloudConfig: AppState.cloudConfig,
+          lastSaved: new Date().toISOString()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        updateSyncStatusUI();
+      } catch (err) {
+        console.warn('Erro ao salvar no localStorage:', err);
+      }
+    }
+
+    function loadFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.blocks && Array.isArray(parsed.blocks)) AppState.blocks = parsed.blocks;
+          if (parsed.books && Array.isArray(parsed.books)) AppState.books = parsed.books;
+          if (parsed.theme) AppState.theme = parsed.theme;
+          if (parsed.retrospectiveScore) AppState.retrospectiveScore = parsed.retrospectiveScore;
+          if (parsed.cloudConfig) AppState.cloudConfig = parsed.cloudConfig;
+          AppState.lastSaved = parsed.lastSaved || null;
+        }
+      } catch (err) {
+        console.warn('Falha ao restaurar do localStorage, usando padrões:', err);
+      }
+    }
+
+    function updateSyncStatusUI() {
+      const timeLabel = document.getElementById('sync-last-saved-time');
+      const badge = document.getElementById('sync-status-badge');
+      const iconDesktop = document.getElementById('sync-icon-desktop');
+      const iconMobile = document.getElementById('sync-icon-mobile');
+
+      const now = new Date();
+      const horaFormatada = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (timeLabel) timeLabel.textContent = `Último salvamento local às ${horaFormatada}`;
+      if (badge) {
+        badge.textContent = 'Salvo';
+        badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+      }
+      if (iconDesktop) iconDesktop.className = 'w-4 h-4 text-emerald-400';
+      if (iconMobile) iconMobile.className = 'w-4 h-4 text-emerald-400';
+    }
+
+    function salvarManualmente() {
+      saveToStorage();
+      playBellSound();
+      showToast('Todos os dados foram guardados no dispositivo!', 'success');
+    }
+
+    /* =================================================================
+       PORTABILIDADE: EXPORTAR E IMPORTAR BACKUP JSON
+       ================================================================= */
+    function exportarBackupJSON() {
+      saveToStorage();
+      const exportData = {
+        app: 'ORDO',
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        theme: AppState.theme,
+        blocks: AppState.blocks,
+        books: AppState.books,
+        retrospectiveScore: AppState.retrospectiveScore
+      };
+
+      const jsonStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `ordo_backup_${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('Backup exportado com sucesso!', 'success');
+    }
+
+    function importarBackupJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!imported.blocks || !imported.books) {
+            throw new Error('Ficheiro de backup inválido');
+          }
+
+          AppState.blocks = imported.blocks;
+          AppState.books = imported.books;
+          if (imported.theme) AppState.theme = imported.theme;
+          if (imported.retrospectiveScore) AppState.retrospectiveScore = imported.retrospectiveScore;
+
+          // Atualizar tema
+          if (AppState.theme === 'light') {
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+          }
+
+          saveToStorage();
+          renderBlocks();
+          renderBooks();
+          updateThemeUI();
+          closeModal('modal-sincronizacao');
+          playBellSound();
+          showToast('Backup restaurado com sucesso no dispositivo!', 'success');
+        } catch (err) {
+          showToast('Erro ao importar backup. Ficheiro incompatível.', 'danger');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = ''; // Reset do input
+    }
+
+    /* =================================================================
+       SINCRONIZAÇÃO EM NUVEM (SUPABASE / REST COMPATÍVEL)
+       ================================================================= */
+    function guardarConfiguracaoNuvem() {
+      const url = document.getElementById('cloud-endpoint-url').value.trim();
+      const key = document.getElementById('cloud-api-key').value.trim();
+
+      AppState.cloudConfig = { url, key };
+      saveToStorage();
+      showToast('Configuração de nuvem guardada!', 'success');
+    }
+
+    async function sincronizarComNuvem() {
+      const { url, key } = AppState.cloudConfig;
+      if (!url) {
+        showToast('Indica o URL do teu backend ou Supabase primeiro.', 'info');
+        return;
+      }
+
+      showToast('A sincronizar com a nuvem...', 'info');
+
+      try {
+        // Envio com suporte ao protocolo REST/Supabase
+        const targetUrl = url.endsWith('/') ? `${url}rest/v1/ordo_sync` : `${url}/rest/v1/ordo_sync`;
+        const res = await fetch(targetUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': key || '',
+            'Authorization': `Bearer ${key || ''}`,
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify({
+            user_device: navigator.userAgent.slice(0, 40),
+            updated_at: new Date().toISOString(),
+            blocks: AppState.blocks,
+            books: AppState.books
+          })
+        });
+
+        if (res.ok) {
+          saveToStorage();
+          showToast('Sincronização com a nuvem concluída!', 'success');
+        } else {
+          // Se o endpoint personalizado ainda não tiver a tabela criada, guarda localmente e avisa
+          saveToStorage();
+          showToast('Conexão testada. Dados salvos localmente com segurança.', 'info');
+        }
+      } catch (err) {
+        // Fallback resiliente offline
+        saveToStorage();
+        showToast('Servidor não alcançado. Dados salvos localmente.', 'info');
+      }
+    }
+
+    function restaurarDadosPadrao() {
+      if (confirm('Desejas restaurar os blocos e livros para a configuração inicial?')) {
+        AppState.blocks = JSON.parse(JSON.stringify(defaultState.blocks));
+        AppState.books = JSON.parse(JSON.stringify(defaultState.books));
+        saveToStorage();
+        renderBlocks();
+        renderBooks();
+        closeModal('modal-sincronizacao');
+        showToast('Dados restaurados para a ordem inicial.', 'gold');
+      }
+    }
+
+    /* =================================================================
+       ALTERNÂNCIA DE TEMA (CLARO / ESCURO)
+       ================================================================= */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+
+      if (isDark) {
+        html.classList.remove('dark');
+        AppState.theme = 'light';
+        showToast('Tema Claro ativado. Serenidade visual.', 'gold');
+      } else {
+        html.classList.add('dark');
+        AppState.theme = 'dark';
+        showToast('Tema Escuro ativado para foco e imersão.', 'gold');
+      }
+
+      saveToStorage();
+      updateThemeUI();
+    }
+
+    function updateThemeUI() {
+      const isDark = document.documentElement.classList.contains('dark');
+      
+      const iconDesktop = document.getElementById('theme-icon-desktop');
+      const textDesktop = document.getElementById('theme-text-desktop');
+      const badgeDesktop = document.getElementById('theme-badge-desktop');
+      const iconTop = document.getElementById('theme-icon-top');
+      const iconMobile = document.getElementById('theme-icon-mobile');
+
+      if (iconDesktop) iconDesktop.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      if (textDesktop) textDesktop.textContent = isDark ? 'Alternar para Claro' : 'Alternar para Escuro';
+      if (badgeDesktop) badgeDesktop.textContent = isDark ? 'Escuro' : 'Claro';
+      if (iconTop) iconTop.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      if (iconMobile) iconMobile.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+
+      lucide.createIcons();
+    }
+
+    /* =================================================================
+       SISTEMA DE TOASTS FLUIDOS
+       ================================================================= */
+    function showToast(message, type = 'gold') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const colors = {
+        gold: 'bg-ordo-900 border-amber-500/80 text-amber-300',
+        success: 'bg-ordo-900 border-emerald-500/80 text-emerald-300',
+        info: 'bg-ordo-900 border-blue-500/80 text-blue-300',
+        danger: 'bg-ordo-900 border-rose-500/80 text-rose-300'
+      };
+
+      toast.className = `flex items-center gap-3 px-4 py-3 rounded-2xl border shadow-2xl text-xs font-medium transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${colors[type] || colors.gold}`;
+      toast.innerHTML = `
+        <i data-lucide="bell" class="w-4 h-4 shrink-0"></i>
+        <span>${message}</span>
+      `;
+      
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 20);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    /* =================================================================
+       NAVEGAÇÃO POR ABAS
+       ================================================================= */
+    function switchTab(tabId) {
+      AppState.currentTab = tabId;
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.remove('hidden');
+
+      // Atualizar botões Desktop
+      document.querySelectorAll('#nav-desktop .tab-btn').forEach(btn => {
+        const isActive = btn.dataset.tab === tabId;
+        btn.classList.toggle('bg-ordo-850', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('text-slate-300', !isActive);
+      });
+
+      // Atualizar botões Mobile
+      document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+        const isActive = btn.dataset.tab === tabId;
+        btn.classList.toggle('text-amber-400', isActive);
+        btn.classList.toggle('text-slate-400', !isActive);
+      });
+
+      lucide.createIcons();
+    }
+
+    /* =================================================================
+       CÁLCULO DINÂMICO DOS 5 EIXOS DA ORDEM
+       ================================================================= */
+    function formatMinutes(minutes) {
+      if (!minutes || minutes <= 0) return '0 min';
+      if (minutes < 60) return `${minutes} min`;
+      const h = Math.floor(minutes / 60);
+      const m = minutes % 60;
+      return m > 0 ? `${h}h ${m}m` : `${h}h 00m`;
+    }
+
+    function updateAxisStats() {
+      const totals = {
+        'Propósito': 0,
+        'Família': 0,
+        'Ofício': 0,
+        'Saúde': 0,
+        'Estudo': 0
+      };
+
+      AppState.blocks.forEach(b => {
+        if (totals[b.axis] !== undefined) {
+          totals[b.axis] += (parseInt(b.duration) || 0);
+        }
+      });
+
+      const targets = { 'Propósito': 60, 'Família': 120, 'Ofício': 240, 'Saúde': 60, 'Estudo': 120 };
+
+      const axesMap = [
+        { key: 'Propósito', statId: 'stat-tempo-proposito', barId: 'bar-tempo-proposito' },
+        { key: 'Família', statId: 'stat-tempo-familia', barId: 'bar-tempo-familia' },
+        { key: 'Ofício', statId: 'stat-tempo-trabalho', barId: 'bar-tempo-trabalho' },
+        { key: 'Saúde', statId: 'stat-tempo-saude', barId: 'bar-tempo-saude' },
+        { key: 'Estudo', statId: 'stat-tempo-estudo', barId: 'bar-tempo-estudo' }
+      ];
+
+      axesMap.forEach(item => {
+        const min = totals[item.key] || 0;
+        const statEl = document.getElementById(item.statId);
+        const barEl = document.getElementById(item.barId);
+        if (statEl) statEl.textContent = formatMinutes(min);
+        if (barEl) {
+          const targetMin = targets[item.key] || 60;
+          const pct = Math.min(100, Math.round((min / targetMin) * 100));
+          barEl.style.width = `${pct}%`;
+        }
+      });
+    }
+
+    /* =================================================================
+       RENDERIZAÇÃO DE BLOCOS E TIMELINE
+       ================================================================= */
+    function renderBlocks() {
+      const container = document.getElementById('timeline-blocks-list');
+      const countLabel = document.getElementById('blocks-count-label');
+      if (!container) return;
+
+      container.innerHTML = '';
+      countLabel.textContent = `${AppState.blocks.length} blocos planeados`;
+
+      const axisColors = {
+        'Propósito': { border: 'border-purple-500/40', text: 'text-purple-400', bg: 'bg-purple-500/10' },
+        'Família': { border: 'border-rose-500/40', text: 'text-rose-400', bg: 'bg-rose-500/10' },
+        'Ofício': { border: 'border-blue-500/40', text: 'text-blue-400', bg: 'bg-blue-500/10' },
+        'Saúde': { border: 'border-emerald-500/40', text: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+        'Estudo': { border: 'border-amber-500/40', text: 'text-amber-400', bg: 'bg-amber-500/10' }
+      };
+
+      AppState.blocks.forEach(block => {
+        const style = axisColors[block.axis] || axisColors['Estudo'];
+        const isCompleted = block.completed;
+
+        const card = document.createElement('div');
+        card.className = `flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-ordo-900 border transition-all ${isCompleted ? 'border-ordo-800 opacity-60' : 'border-ordo-800 hover:border-amber-500/40'}`;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3.5 flex-1 min-w-0">
+            <button onclick="toggleBlockCompletion(${block.id})" class="w-7 h-7 rounded-xl border flex items-center justify-center shrink-0 transition-colors ${isCompleted ? 'bg-amber-500 border-amber-500 text-ordo-950' : 'border-ordo-700 hover:border-amber-400 text-transparent'}" title="${isCompleted ? 'Reabrir bloco' : 'Marcar como concluído'}">
+              <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+            </button>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded ${style.bg} ${style.text}">
+                  ${block.axis}
+                </span>
+                <span class="text-xs text-slate-400 font-mono">${block.time} (${block.duration} min)</span>
+              </div>
+              <h4 class="text-sm font-semibold text-white mt-1 truncate ${isCompleted ? 'line-through text-slate-400' : ''}">
+                ${escapeHtml(block.title)}
+              </h4>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+            ${!isCompleted ? `
+              <button onclick="startSpecificBlockById(${block.id})" class="px-2.5 py-1.5 rounded-xl bg-ordo-850 hover:bg-ordo-800 text-amber-400 text-xs flex items-center gap-1.5 transition-colors border border-ordo-800 hover:border-amber-500/40" title="Iniciar foco monástico">
+                <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                <span>Focar</span>
+              </button>
+            ` : `
+              <span class="text-xs text-emerald-400 flex items-center gap-1 font-mono px-2 py-1 bg-emerald-500/10 rounded-lg">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Concluído
+              </span>
+            `}
+
+            <button onclick="openEditBlockModal(${block.id})" class="p-2 rounded-xl bg-ordo-850 hover:bg-ordo-800 text-slate-300 hover:text-amber-300 text-xs flex items-center gap-1 transition-colors border border-ordo-800 hover:border-amber-500/40" title="Editar este bloco">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateAxisStats();
+      lucide.createIcons();
+    }
+
+    function toggleBlockCompletion(blockId) {
+      const block = AppState.blocks.find(b => b.id === blockId);
+      if (block) {
+        block.completed = !block.completed;
+        saveToStorage();
+        renderBlocks();
+        showToast(block.completed ? `Bloco "${block.title}" concluído!` : 'Bloco reaberto.');
+      }
+    }
+
+    function salvarNovoBloco() {
+      const titulo = document.getElementById('modal-bloco-titulo').value.trim();
+      const eixo = document.getElementById('modal-bloco-eixo').value;
+      const duracao = parseInt(document.getElementById('modal-bloco-duracao').value) || 45;
+      const horario = document.getElementById('modal-bloco-horario').value || '14:00';
+
+      if (!titulo) {
+        showToast('Informe um título para o bloco.', 'info');
+        return;
+      }
+
+      AppState.blocks.push({
+        id: Date.now(),
+        title: titulo,
+        axis: eixo,
+        duration: duracao,
+        time: horario,
+        completed: false
+      });
+
+      saveToStorage();
+      closeModal('modal-novo-bloco');
+      renderBlocks();
+      showToast('Novo bloco agendado com sucesso!', 'success');
+      document.getElementById('modal-bloco-titulo').value = '';
+    }
+
+    /* =================================================================
+       EDIÇÃO DE BLOCOS AGENDADOS (MODAL & LÓGICA)
+       ================================================================= */
+    function openEditBlockModal(blockId) {
+      const block = AppState.blocks.find(b => b.id === blockId);
+      if (!block) return;
+
+      document.getElementById('modal-edit-bloco-id').value = block.id;
+      document.getElementById('modal-edit-bloco-titulo').value = block.title;
+      document.getElementById('modal-edit-bloco-eixo').value = block.axis;
+      document.getElementById('modal-edit-bloco-duracao').value = block.duration;
+      document.getElementById('modal-edit-bloco-horario').value = block.time;
+      document.getElementById('modal-edit-bloco-concluido').checked = !!block.completed;
+
+      openModal('modal-editar-bloco');
+    }
+
+    function salvarEdicaoBloco() {
+      const id = parseInt(document.getElementById('modal-edit-bloco-id').value);
+      const titulo = document.getElementById('modal-edit-bloco-titulo').value.trim();
+      const eixo = document.getElementById('modal-edit-bloco-eixo').value;
+      const duracao = parseInt(document.getElementById('modal-edit-bloco-duracao').value) || 45;
+      const horario = document.getElementById('modal-edit-bloco-horario').value || '14:00';
+      const concluido = document.getElementById('modal-edit-bloco-concluido').checked;
+
+      if (!titulo) {
+        showToast('O título do bloco não pode estar vazio.', 'info');
+        return;
+      }
+
+      const block = AppState.blocks.find(b => b.id === id);
+      if (!block) return;
+
+      block.title = titulo;
+      block.axis = eixo;
+      block.duration = duracao;
+      block.time = horario;
+      block.completed = concluido;
+
+      saveToStorage();
+      closeModal('modal-editar-bloco');
+      renderBlocks();
+      showToast(`Bloco "${titulo}" atualizado com sucesso!`, 'success');
+    }
+
+    function eliminarBlocoEmEdicao() {
+      const id = parseInt(document.getElementById('modal-edit-bloco-id').value);
+      const index = AppState.blocks.findIndex(b => b.id === id);
+      if (index !== -1) {
+        const removed = AppState.blocks.splice(index, 1)[0];
+        saveToStorage();
+        closeModal('modal-editar-bloco');
+        renderBlocks();
+        showToast(`Bloco "${removed.title}" eliminado.`, 'danger');
+      }
+    }
+
+    function startSpecificBlockById(blockId) {
+      const block = AppState.blocks.find(b => b.id === blockId);
+      if (!block) return;
+      startSpecificBlock(block.title, block.duration, block.axis);
+    }
+
+    function escapeHtml(string) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return String(string).replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    /* =================================================================
+       MOTOR DE ACABATIVA DE OBRAS (PACING ENGINE)
+       ================================================================= */
+    function renderBooks() {
+      const container = document.getElementById('books-list');
+      const selectReg = document.getElementById('modal-reg-livro-select');
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (selectReg) selectReg.innerHTML = '';
+
+      let totalLidas = 0;
+
+      AppState.books.forEach(book => {
+        totalLidas += book.readPages;
+        const progressPct = Math.min(100, Math.round((book.readPages / book.totalPages) * 100));
+        const paginasRestantes = Math.max(0, book.totalPages - book.readPages);
+        const cotaDiaria = Math.ceil(paginasRestantes / (book.targetDays || 1));
+
+        if (selectReg) {
+          const opt = document.createElement('option');
+          opt.value = book.id;
+          opt.textContent = `${book.title} (Lidas: ${book.readPages}/${book.totalPages})`;
+          selectReg.appendChild(opt);
+        }
+
+        const card = document.createElement('div');
+        card.className = 'bg-ordo-900 border border-ordo-800 rounded-2xl p-5 space-y-4 hover:border-amber-500/30 transition-all';
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-mono text-amber-400 font-semibold uppercase">Sprint de ${book.targetDays} dias</span>
+              <h4 class="text-base font-bold text-white mt-0.5">${escapeHtml(book.title)}</h4>
+              <p class="text-xs text-slate-400">${escapeHtml(book.author)}</p>
+            </div>
+            <span class="text-sm font-mono font-bold text-white bg-ordo-850 px-2.5 py-1 rounded-xl border border-ordo-800">
+              ${progressPct}%
+            </span>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-mono text-slate-300">
+              <span>${book.readPages} de ${book.totalPages} pág.</span>
+              <span class="text-amber-400 font-semibold">${cotaDiaria} pág/dia de meta</span>
+            </div>
+            <div class="w-full bg-ordo-800 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-amber-500 to-amber-300 h-full rounded-full transition-all duration-500" style="width: ${progressPct}%"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-ordo-800/80">
+            <span class="text-[11px] text-slate-400">Faltam ${paginasRestantes} páginas</span>
+            <button onclick="quickAddPages(${book.id}, 15)" class="px-3 py-1.5 rounded-xl bg-ordo-850 hover:bg-ordo-800 text-amber-300 text-xs font-medium border border-ordo-800 flex items-center gap-1">
+              <i data-lucide="plus" class="w-3 h-3"></i> 15 pág
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('stat-livros-ativos').textContent = AppState.books.length;
+      document.getElementById('stat-paginas-lidas').textContent = totalLidas;
+
+      lucide.createIcons();
+    }
+
+    function quickAddPages(bookId, qtd) {
+      const book = AppState.books.find(b => b.id === bookId);
+      if (book) {
+        book.readPages = Math.min(book.totalPages, book.readPages + qtd);
+        saveToStorage();
+        renderBooks();
+        playBellSound();
+        showToast(`+${qtd} páginas registadas em "${book.title}"!`, 'success');
+      }
+    }
+
+    function salvarNovoLivro() {
+      const titulo = document.getElementById('modal-livro-titulo').value.trim();
+      const total = parseInt(document.getElementById('modal-livro-total').value) || 200;
+      const lidas = parseInt(document.getElementById('modal-livro-lidas').value) || 0;
+      const dias = parseInt(document.getElementById('modal-livro-dias').value) || 14;
+
+      if (!titulo) {
+        showToast('Informe o título do livro.', 'info');
+        return;
+      }
+
+      AppState.books.push({
+        id: Date.now(),
+        title: titulo,
+        author: 'Autor Selecionado',
+        totalPages: total,
+        readPages: Math.min(total, lidas),
+        targetDays: dias
+      });
+
+      saveToStorage();
+      closeModal('modal-novo-livro');
+      renderBooks();
+      showToast('Obra incluída no motor de acabativa!', 'success');
+      document.getElementById('modal-livro-titulo').value = '';
+    }
+
+    function confirmarRegistroPaginas() {
+      const select = document.getElementById('modal-reg-livro-select');
+      const qtd = parseInt(document.getElementById('modal-reg-qtd-paginas').value) || 0;
+      const bookId = parseInt(select.value);
+
+      if (qtd <= 0) {
+        showToast('Quantidade inválida de páginas.', 'info');
+        return;
+      }
+
+      quickAddPages(bookId, qtd);
+      closeModal('modal-reg-paginas');
+    }
+
+    /* =================================================================
+       CRONÓMETRO DO MODO MONÁSTICO
+       ================================================================= */
+    function updateTimerUI() {
+      const mins = Math.floor(AppState.timer.secondsLeft / 60);
+      const secs = AppState.timer.secondsLeft % 60;
+      const display = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      
+      document.getElementById('timer-display').textContent = display;
+
+      const totalSecs = AppState.timer.durationMinutes * 60;
+      const fraction = AppState.timer.secondsLeft / totalSecs;
+      const offset = 276.46 * (1 - fraction);
+      document.getElementById('timer-progress-ring').style.strokeDashoffset = offset;
+    }
+
+    function toggleTimer() {
+      if (AppState.timer.active) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      AppState.timer.active = true;
+      document.getElementById('timer-play-text').textContent = 'Pausar Foco';
+      document.getElementById('timer-play-icon').setAttribute('data-lucide', 'pause');
+      lucide.createIcons();
+
+      playBellSound();
+
+      if (AppState.timer.intervalId) clearInterval(AppState.timer.intervalId);
+
+      AppState.timer.intervalId = setInterval(() => {
+        if (AppState.timer.secondsLeft > 0) {
+          AppState.timer.secondsLeft--;
+          updateTimerUI();
+        } else {
+          finishTimerBlock();
+        }
+      }, 1000);
+
+      showToast('Modo Monástico Ativo. Mantenha-se inteiro no que faz.', 'gold');
+    }
+
+    function pauseTimer() {
+      AppState.timer.active = false;
+      document.getElementById('timer-play-text').textContent = 'Retomar Foco';
+      document.getElementById('timer-play-icon').setAttribute('data-lucide', 'play');
+      lucide.createIcons();
+
+      if (AppState.timer.intervalId) {
+        clearInterval(AppState.timer.intervalId);
+        AppState.timer.intervalId = null;
+      }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      AppState.timer.secondsLeft = AppState.timer.durationMinutes * 60;
+      updateTimerUI();
+      showToast('Cronómetro reiniciado.');
+    }
+
+    function setTimerDuration(mins) {
+      AppState.timer.durationMinutes = mins;
+      AppState.timer.secondsLeft = mins * 60;
+      updateTimerUI();
+
+      document.querySelectorAll('.duration-pill').forEach(pill => {
+        const isCurrent = pill.textContent.includes(`${mins}m`);
+        pill.classList.toggle('border-amber-500/60', isCurrent);
+        pill.classList.toggle('text-amber-300', isCurrent);
+        pill.classList.toggle('font-medium', isCurrent);
+      });
+    }
+
+    function startSpecificBlock(taskName, durationMinutes, axis) {
+      AppState.timer.currentTask = taskName;
+      AppState.timer.currentAxis = axis;
+      document.getElementById('timer-task-name').textContent = taskName;
+      document.getElementById('timer-axis-name').textContent = `${axis}`;
+      
+      setTimerDuration(durationMinutes);
+      switchTab('foco');
+      startTimer();
+    }
+
+    function finishTimerBlock() {
+      pauseTimer();
+      playBellSound();
+      showToast('Sessão concluída com serenidade! Dever cumprido.', 'success');
+
+      const block = AppState.blocks.find(b => b.title.includes(AppState.timer.currentTask) || AppState.timer.currentTask.includes(b.title));
+      if (block) {
+        block.completed = true;
+        saveToStorage();
+        renderBlocks();
+      }
+    }
+
+    function finishTimerBlockEarly() {
+      finishTimerBlock();
+    }
+
+    /* =================================================================
+       SÍNTESE DE ÁUDIO WEB AUDIO API (Ruído Castanho & Sino Zen)
+       ================================================================= */
+    function initAudioContext() {
+      if (!AppState.audio.ctx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        AppState.audio.ctx = new AudioContext();
+      }
+      if (AppState.audio.ctx.state === 'suspended') {
+        AppState.audio.ctx.resume();
+      }
+    }
+
+    function toggleAmbientSound() {
+      initAudioContext();
+      const ctx = AppState.audio.ctx;
+
+      if (AppState.audio.isPlaying) {
+        if (AppState.audio.noiseNode) {
+          AppState.audio.noiseNode.stop();
+          AppState.audio.noiseNode.disconnect();
+          AppState.audio.noiseNode = null;
+        }
+        AppState.audio.isPlaying = false;
+        document.getElementById('sound-status-label').textContent = 'Desligado';
+        document.getElementById('sound-btn-text').textContent = 'Ruído Castanho Zen';
+        showToast('Som ambiente desativado.');
+      } else {
+        const bufferSize = ctx.sampleRate * 2;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let lastOut = 0.0;
+
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 3.5;
+        }
+
+        const whiteNoise = ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 350;
+
+        const gain = ctx.createGain();
+        gain.gain.value = 0.15;
+
+        whiteNoise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        whiteNoise.start();
+        AppState.audio.noiseNode = whiteNoise;
+        AppState.audio.isPlaying = true;
+
+        document.getElementById('sound-status-label').textContent = 'Ativo (Ruído Zen)';
+        document.getElementById('sound-btn-text').textContent = 'Parar Som Ambiente';
+        showToast('Som ambiente ativado para foco profundo.', 'gold');
+      }
+    }
+
+    function playBellSound() {
+      try {
+        initAudioContext();
+        const ctx = AppState.audio.ctx;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(528, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(132, ctx.currentTime + 1.8);
+
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 2.0);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 2.0);
+      } catch (e) {
+        // Fallback silencioso
+      }
+    }
+
+    /* =================================================================
+       RETROSPECTIVA NOTURNA ("PODA DE ARESTAS")
+       ================================================================= */
+    function setRetrospectiveScore(score) {
+      AppState.retrospectiveScore = score;
+      saveToStorage();
+      document.querySelectorAll('.score-btn').forEach((btn, idx) => {
+        const isSelected = (idx + 1) === score;
+        btn.classList.toggle('border-amber-500', isSelected);
+        btn.classList.toggle('text-amber-300', isSelected);
+        btn.classList.toggle('text-slate-400', !isSelected);
+      });
+    }
+
+    function concludeRetrospective() {
+      const resolucao = document.getElementById('input-resolucao-noturna').value.trim();
+      playBellSound();
+      showToast('Ciclo diário encerrado com serenidade. Durma em paz.', 'success');
+      
+      if (resolucao) {
+        AppState.blocks.unshift({
+          id: Date.now(),
+          title: `[Amanhã] ${resolucao}`,
+          axis: 'Estudo',
+          duration: 45,
+          time: '08:00',
+          completed: false
+        });
+      }
+
+      saveToStorage();
+      setTimeout(() => {
+        switchTab('hoje');
+      }, 1200);
+    }
+
+    /* =================================================================
+       UTILITÁRIOS: MODAIS
+       ================================================================= */
+    function openModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) {
+        el.classList.remove('hidden');
+        lucide.createIcons();
+      }
+    }
+
+    function closeModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) el.classList.add('hidden');
+    }
+
+    /* =================================================================
+       INICIALIZAÇÃO DA APLICAÇÃO
+       ================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFromStorage();
+
+      // Aplicar tema carregado
+      if (AppState.theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+
+      // Preencher credenciais de nuvem se existirem
+      if (AppState.cloudConfig) {
+        const urlInput = document.getElementById('cloud-endpoint-url');
+        const keyInput = document.getElementById('cloud-api-key');
+        if (urlInput) urlInput.value = AppState.cloudConfig.url || '';
+        if (keyInput) keyInput.value = AppState.cloudConfig.key || '';
+      }
+
+      renderBlocks();
+      renderBooks();
+      updateTimerUI();
+      switchTab('hoje');
+      updateThemeUI();
+      updateSyncStatusUI();
+      setRetrospectiveScore(AppState.retrospectiveScore);
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
