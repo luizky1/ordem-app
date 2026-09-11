@@ -1,8 +1,10 @@
-const CACHE_NAME = 'ordo-pwa-v1';
+const CACHE_NAME = 'ordo-pwa-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
   'https://cdn.tailwindcss.com',
   'https://unpkg.com/lucide@latest',
   'https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@300;400;500;600;700&display=swap'
